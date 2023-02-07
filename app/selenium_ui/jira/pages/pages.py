@@ -201,6 +201,13 @@ class Project(BasePage):
         BasePage.__init__(self, driver)
         url_manager = UrlManager(project_key=project_key)
         self.page_url = url_manager.project_summary_url()
+        self.version_manager_url = url_manager.version_manager_url()
+
+    def go_to_version_manager(self):
+        self.go_to_url(self.version_manager_url)
+    
+    def wait_for_version_manager(self):
+        self.wait_until_present(ProjectLocators.version_manager_content)
 
 
 class ProjectsList(BasePage):
