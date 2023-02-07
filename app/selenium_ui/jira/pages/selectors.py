@@ -26,6 +26,7 @@ class UrlManager:
         self.boards_list_params = '/secure/ManageRapidViews.jspa'
         self.scrum_board_backlog_params = f"/secure/RapidBoard.jspa?rapidView={board_id}&view=planning"
         self.scrum_board_params = f"/secure/RapidBoard.jspa?rapidView={board_id}"
+        self.version_manager_params = f"/projects/{project_key}?selectedItem=jira.plugin.versionmanager:sidebar-item"
 
     def login_url(self):
         return f"{self.host}{self.login_params}"
@@ -62,6 +63,9 @@ class UrlManager:
 
     def logout_url(self):
         return f"{self.host}{self.logout_params}"
+
+    def version_manager_url(self):
+        return f"{self.host}{self.version_manager_params}"
 
 
 class LoginPageLocators:
@@ -126,6 +130,7 @@ class ProjectLocators:
     # projects list locators
     projects_list = (By.CSS_SELECTOR, "tbody.projects-list")
     projects_not_found = (By.CLASS_NAME, "none-panel")
+    version_manager_content = (By.CLASS_NAME, "aui-page-header-main")
 
 
 class SearchLocators:
