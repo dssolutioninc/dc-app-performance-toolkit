@@ -32,9 +32,9 @@ settings:
     browse_projects: 9
     view_scrum_board: 8
     view_kanban_board: 7
-    view_backlog: 6
+    view_backlog: 5
     browse_boards: 1
-    standalone_extension: 5 # By default disabled
+    standalone_extension: 1 # By default disabled
     # Custom dataset section.
     custom_dataset_query:          # Write JQL query to add JQL output to the app/datasets/jira/custom-issues.csv, e.g. "summary ~ 'AppIssue*'"
 services:
