@@ -26,6 +26,9 @@ class UrlManager:
         self.boards_list_params = '/secure/ManageRapidViews.jspa'
         self.scrum_board_backlog_params = f"/secure/RapidBoard.jspa?rapidView={board_id}&view=planning"
         self.scrum_board_params = f"/secure/RapidBoard.jspa?rapidView={board_id}"
+        self.project_specific_custom_field_context_params = "/secure/admin/CreateContexts.jspa"
+        self.project_specific_statistics_params = f"/projects/{project_key}?selectedItem=jira.plugin.projectspecificselectfield.jpssf:sidebar-item"
+        self.project_specific_manage_options_params = f"/secure/ManageOptions.jspa?projectKey={project_key}"
 
     def login_url(self):
         return f"{self.host}{self.login_params}"
@@ -62,6 +65,15 @@ class UrlManager:
 
     def logout_url(self):
         return f"{self.host}{self.logout_params}"
+    
+    def project_specific_custom_field_context_url(self):
+        return f"{self.host}{self.project_specific_custom_field_context_params}"
+    
+    def project_specific_statistics_url(self):
+        return f"{self.host}{self.project_specific_statistics_params}"
+    
+    def project_specific_manage_options_url(self):
+        return f"{self.host}{self.project_specific_manage_options_params}"
 
 
 class LoginPageLocators:
@@ -126,6 +138,7 @@ class ProjectLocators:
     # projects list locators
     projects_list = (By.CSS_SELECTOR, "tbody.projects-list")
     projects_not_found = (By.CLASS_NAME, "none-panel")
+    project_specific_content = (By.CLASS_NAME, "aui-page-header-main")
 
 
 class SearchLocators:
