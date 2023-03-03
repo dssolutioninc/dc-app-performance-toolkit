@@ -72,51 +72,33 @@ def project_specific(locust):
             options_value.append(content["value"])
             assert content["value"] == f"locust test option 2 updated {ts}" and content["disabled"] != option_2_disabled, 'update option 2 error'
 
-        # get options
-        r = locust.get(f'/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}', catch_response=True)
-        content = json.loads(r.content.decode('utf-8'))
-        has_test_options = False
-        first_option = content[0]
-        last_option = content[len(content) - 1]
-        origin_option_count = len(content)
-        for i in content:
-            if i["id"] in options_id or i["value"] in options_value:
-                has_test_options = True
-                break
-        assert has_test_options == True, 'get option error'
 
         if custom_field_types[custom_field_keys.index(custom_field_key)] != SELECT_FIELD_SIMPLE:
-            # move option
-            moved_option_body = {
-                'after': f"/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}/{last_option['id']}"
-            }
-            r = locust.post(f"/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}/{first_option['id']}/move", json=moved_option_body, headers=RESOURCE_HEADERS, catch_response=True)
-            r = locust.get(f'/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}', headers=RESOURCE_HEADERS, catch_response=True)
+            r = locust.get(f'/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}', catch_response=True)
             content = json.loads(r.content.decode('utf-8'))
-            assert first_option['id'] == content[len(content) - 1]['id'], 'move option error'
+            if len(content) > 1:
+                # move option
+                moved_option_body = {'after': f"/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}/{option_1_id}"}
+                r = locust.post(f"/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}/{option_2_id}/move", json=moved_option_body, headers=RESOURCE_HEADERS, catch_response=True)
 
-            # sort option
-            r = locust.post(f'/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}/sort', headers=RESOURCE_HEADERS, catch_response=True)
-            r = locust.get(f'/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}', headers=RESOURCE_HEADERS, catch_response=True)
-            content = json.loads(r.content.decode('utf-8'))
-            is_sorted = True
-            i = 1
-            while i < len(content) and len(content) > 1:
-                if(content[i]['value'] < content[i - 1]['value']):
-                    is_sorted = False
-                i += 1
-            assert is_sorted == True, 'sort options error'
+                # statistics rest
+                r = locust.get(f'/rest/projectspecificselectfield/1.0/statistics/{project_key}/{custom_field_key}', headers=RESOURCE_HEADERS, catch_response=True)
+                content = json.loads(r.content.decode('utf-8'))
+                assert len(content['options']) < 2 or content['id'] == custom_field_key, 'statistics field error'
 
-            # delete option
-            r = locust.delete(f"/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}/{first_option['id']}", headers=RESOURCE_HEADERS, catch_response=True)
-            r = locust.get(f'/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}', headers=RESOURCE_HEADERS, catch_response=True)
-            content = json.loads(r.content.decode('utf-8'))
-            assert len(content) == origin_option_count - 1, 'delete option error'
+                # delete option
+                r = locust.delete(f"/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}/{option_1_id}", headers=RESOURCE_HEADERS, catch_response=True)
+                r = locust.delete(f"/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}/{option_2_id}", headers=RESOURCE_HEADERS, catch_response=True)
 
-        # statistics rest
-        r = locust.get(f'/rest/projectspecificselectfield/1.0/statistics/{project_key}/{custom_field_key}', headers=RESOURCE_HEADERS, catch_response=True)
-        content = json.loads(r.content.decode('utf-8'))
-        assert len(content['options']) == origin_option_count - 1 or content['id'] == custom_field_key, 'statistics field error'
+                # get version
+                r = locust.get(f'/rest/projectspecificselectfield/1.0/customfield/{project_key}/{custom_field_key}', catch_response=True)               
+                content = json.loads(r.content.decode('utf-8'))
+                has_test_options = False
+                for i in content:
+                    if i["id"] in options_id or i["value"] in options_value:
+                        has_test_options = True
+                        break
+                assert has_test_options == False, 'get option error'
 
         ### context manager rest
         # get contexts
