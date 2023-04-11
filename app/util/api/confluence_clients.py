@@ -6,6 +6,40 @@ from lxml import html
 
 BATCH_SIZE_SEARCH = 500
 
+BODY_STORAGE_MEETICAL_PAGE = "<h2>Here is Meetical page:&nbsp;</h2><p><ac:structured-macro ac:name=\"meetical-event-title-macro\" ac:schemaversion=\"1\" ac:macro-id=\"b7ff1fb1-a720-45cc-bd02-a985bf7a7111\" /></p><p><ac:structured-macro ac:name=\"meetical-location-macro\" ac:schemaversion=\"1\" ac:macro-id=\"bbc4aaaa-714e-4e6e-b34c15c514c05b5d\" /></p><p><ac:structured-macro ac:name=\"meetical-meeting-status-macro\" ac:schema-version=\"1\" ac:macro-id=\"150535ca-fea4-4526-a78acb1563265afd\" /></p><p><ac:structured-macro ac:name=\"meetical-date-macro\" ac:schemaversion=\"1\" ac:macro-id=\"0b1427b0-fb26-46ba-9917-d2686b4c7ee8\" /></p><p><ac:structured-macro ac:name=\"meetical-attendee-list-macro\" ac:schema-version=\"1\" ac:macro-id=\"40255c32-a5ee-4df8-b985-c99128bdf177\" /></p><p><ac:structured-macro ac:name=\"meetical-calendar-id-macro\" ac:schemaversion=\"1\" ac:macro-id=\"2377e539-940d-4b76-9128-5ddea7f7b088\" /></p><p><ac:structured-macro ac:name=\"meetical-event-calendar-link-macro\" ac:schema-version=\"1\" ac:macro-id=\"9729da72-e038-4937-8cebd3403d008674\" /></p><p><ac:structured-macro ac:name=\"meetical-event-description-macro\" ac:schema-version=\"1\" ac:macro-id=\"04a4f182-aaeb-4a80-8010-a590ba7e7211\" /></p><p><br  /></p>"
+PROPERTY_MEETICAL_PAGE = {
+    "key": "meetical",
+    "value": {
+        "isMeeticalPage": 1,
+        "event": {
+            "id": "5lij03ucmqnfoj704hf29m0fnr",
+            "isCancelled": 0,
+            "recurringEventId": None,
+            "summary": "New Year Test1",
+            "location": "New location",
+            "startDateTime": "2020-01-04T10:00:00+01:00",
+            "endDateTime": "2020-01-04T11:00:00+01:00",
+            "calendarHtmlLinkProxy": "http://localhost:8080/redirect/calendarhtml-link-proxy?event_id=5lij03ucmqnfoj704hf29m0fnr",
+            "attendees": [
+                {
+                    "email": "anna.meetical@gmail.com",
+                    "isOrganizer": 0,
+                    "isResource": 0,
+                    "responseStatus": "needsAction"
+                },
+                {
+                    "email": "testuser12112018@gmail.com",
+                    "isOrganizer": 1,
+                    "isResource": 0,
+                    "responseStatus": "accepted"
+                }
+            ]
+        },
+        "calendarId": "testuser12112018@gmail.com",
+        "templateId": -1,
+        "subPageTemplateId": None
+    }
+}
 
 class ConfluenceRestClient(RestClient):
 
@@ -193,6 +227,41 @@ class ConfluenceRestClient(RestClient):
         if confluence_system_page.count(html_pattern):
             return 'terraform'
         return 'other'
+    
+    def create_meetical_page(self, title):
+        """
+        Create Meetical page
+        :param title: The title for the Meetical page
+        :return: Returns the created Meetical page.
+        """
+        api_url = self._host + "/rest/api/content"
+        payload_page = {
+            "type": "page",
+            "status": "current",
+            "title": title,
+            "space": {
+                "key": "TEST"
+            },
+            "body": {
+                "storage": {
+                    "value": BODY_STORAGE_MEETICAL_PAGE,
+                    "representation": "storage"
+                }
+            }
+        }        
+        response_page = self.post(api_url, "Could not create page", body=payload_page)
+
+        if 'statusCode' in response_page.json() and response_page.json()['statusCode'] != 200:
+            return response_page.json()
+        else:
+            api_url = self._host + f"/rest/api/content/{response_page.json()['id']}/property"
+            response_meetical_page = self.post(api_url, "Could not create Meetical page", body=PROPERTY_MEETICAL_PAGE)
+            if 'statusCode' not in response_meetical_page.json():
+                api_url = self._host + f"/rest/api/content/{response_page.json()['id']}"
+                response_get_created_page = self.get(api_url, "Could not get created Meetical page")
+                return response_get_created_page.json()
+            else:
+                return response_meetical_page.json()
 
 
 class ConfluenceRpcClient(Client):

@@ -158,3 +158,10 @@ class Editor(BasePage):
         self.wait_until_invisible(EditorLocators.save_spinner)
         self.wait_until_any_ec_presented(selectors=[PageLocators.page_title,
                                                     EditorLocators.confirm_publishing_button])
+        
+class MeeticalForConfluence(BasePage):
+    meetical_for_confluence_configuration_url = UrlManager().meetical_for_confluence_configuration_url()
+
+    def go_to_meetical_for_confluence_configuration(self):
+        self.go_to_url(self.meetical_for_confluence_configuration_url)
+
