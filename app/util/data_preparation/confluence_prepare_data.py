@@ -54,7 +54,7 @@ def __create_data_set(rest_client, rpc_client):
     dataset[BLOGS] = async_blogs.get()
 
     dataset[CUSTOM_PAGES] = __get_custom_pages(perf_user_api, 5000, CONFLUENCE_SETTINGS.custom_dataset_query)
-    __get_meetical_pages(rest_client, CONFLUENCE_SETTINGS.concurrency)
+    # __get_meetical_pages(rest_client, CONFLUENCE_SETTINGS.concurrency)
     print(f'Users count: {len(dataset[USERS])}')
     print(f'Pages count: {len(dataset[PAGES])}')
     print(f'Blogs count: {len(dataset[BLOGS])}')

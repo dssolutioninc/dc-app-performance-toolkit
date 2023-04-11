@@ -56,9 +56,9 @@ class ConfluenceBehavior(MyBaseTaskSet):
     def like_page_action(self):
         like_page(self)
 
-    @task(config.percentage('standalone_extension'))
-    def custom_action(self):
-        meetical_for_confluence(self)
+    # @task(config.percentage('standalone_extension'))
+    # def custom_action(self):
+    #     meetical_for_confluence(self)
 
 
 class ConfluenceUser(HttpUser):
