@@ -30,9 +30,9 @@ def advanced_image_gallery(locust):
 
     # gallery API
     random_gallery_name = "".join([random.choice(string.ascii_lowercase) for _ in range(36)])
-    prepared_gallery_name = 'f04cc637-6724-42da-bdec-b682f525b9e6'
+    prepared_gallery_name = '2a505da6-ec03-4df1-9d02-effd5aeb6965'
     spaceKey = "BT"
-    pageId = "393246"
+    pageId = "43493016"
     attachment_name = 'invincibles.jpeg'
     create_gallery_payload = {"name": random_gallery_name,"displayType":"slideshow","galleryWidth":600,"spaceKey":spaceKey,"pageId":pageId,"sortingType":"name","savedFromDraft":False,"showCopyright":False,"displayPlainInMobile":False,"galleryHeight":300,"pictures":[],"gallerySize":"SMALL"}
     response = locust.post('/rest/xalt-gallery/1.0/xalt-gallery', json=create_gallery_payload, headers=headers, catch_response=True)
