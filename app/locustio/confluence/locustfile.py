@@ -1,6 +1,6 @@
 from locust import HttpUser, task, between
 
-from extension.confluence.extension_locust import app_specific_action
+from extension.confluence.extension_locust import advanced_image_gallery
 from locustio.common_utils import LocustConfig, MyBaseTaskSet
 from locustio.confluence.http_actions import login_and_view_dashboard, view_dashboard, view_blog, \
     search_cql_and_view_results, open_editor_and_create_blog, create_and_edit_page, comment_page, view_attachments, \
@@ -58,7 +58,7 @@ class ConfluenceBehavior(MyBaseTaskSet):
 
     @task(config.percentage('standalone_extension'))
     def custom_action(self):
-        app_specific_action(self)
+        advanced_image_gallery(self)
 
 
 class ConfluenceUser(HttpUser):
