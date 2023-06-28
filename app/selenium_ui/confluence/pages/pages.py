@@ -158,3 +158,9 @@ class Editor(BasePage):
         self.wait_until_invisible(EditorLocators.save_spinner)
         self.wait_until_any_ec_presented(selectors=[PageLocators.page_title,
                                                     EditorLocators.confirm_publishing_button])
+        
+class AdvancedTableFormatting(BasePage):
+    page_with_advanced_table_formatting_url = UrlManager().page_with_advanced_table_formatting_url()
+
+    def go_to_page_with_advanced_table_formatting(self):
+        self.go_to_url(self.page_with_advanced_table_formatting_url)
