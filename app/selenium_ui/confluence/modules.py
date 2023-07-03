@@ -249,7 +249,7 @@ def action_for_macros(webdriver, datasets):
 
             def write_title():
                 title_field = BasePage(webdriver).wait_until_visible(EditorLocators.title_field)
-                title = "Selenium45 - " + BasePage(webdriver).generate_random_string(10)
+                title = "Selenium - " + BasePage(webdriver).generate_random_string(10)
                 title_field.clear()
                 title_field.send_keys(title)
 
