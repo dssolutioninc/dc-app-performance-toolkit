@@ -11,8 +11,10 @@ class Login(BasePage):
     page_loaded_selector = LoginPageLocators.login_button
 
     def set_credentials(self, username, password):
-        self.get_element(LoginPageLocators.login_username_field).send_keys(username)
-        self.get_element(LoginPageLocators.login_password_field).send_keys(password)
+        self.get_element(
+            LoginPageLocators.login_username_field).send_keys(username)
+        self.get_element(
+            LoginPageLocators.login_password_field).send_keys(password)
 
     def click_login_button(self):
         self.wait_until_visible(LoginPageLocators.login_button).click()
@@ -28,11 +30,14 @@ class Login(BasePage):
 
     def first_user_setup(self):
         if self.get_element(LoginPageLocators.current_step_sel).text == 'Welcome':
-            self.wait_until_clickable(LoginPageLocators.skip_welcome_button).click()
+            self.wait_until_clickable(
+                LoginPageLocators.skip_welcome_button).click()
         if self.get_element(LoginPageLocators.current_step_sel).text == 'Upload your photo':
-            self.wait_until_clickable(LoginPageLocators.skip_photo_upload).click()
+            self.wait_until_clickable(
+                LoginPageLocators.skip_photo_upload).click()
         if self.get_element(LoginPageLocators.current_step_sel).text == 'Find content':
-            self.wait_until_any_element_visible(LoginPageLocators.skip_find_content)[0].click()
+            self.wait_until_any_element_visible(
+                LoginPageLocators.skip_find_content)[0].click()
             self.wait_until_clickable(LoginPageLocators.finish_setup).click()
 
     def get_app_version(self):
@@ -94,12 +99,15 @@ class Page(BasePage):
         start_time = time.time()
         print(f'Waiting for resources to be loaded: {timeout} s.')
         while time.time() - start_time < timeout:
-            loaded = self.execute_js("return require('confluence-editor-loader/editor-loader').resourcesLoaded();")
+            loaded = self.execute_js(
+                "return require('confluence-editor-loader/editor-loader').resourcesLoaded();")
             if loaded:
-                print(f'Resources are loaded after {time.time() - start_time} s.')
+                print(
+                    f'Resources are loaded after {time.time() - start_time} s.')
                 break
         else:
-            print(f'WARNING: confluence-editor-loader resources were not loaded in {timeout} s')
+            print(
+                f'WARNING: confluence-editor-loader resources were not loaded in {timeout} s')
 
 
 class Dashboard(BasePage):
@@ -142,6 +150,28 @@ class Editor(BasePage):
                         f"tinymce.appendChild(tag_p)")
         self.return_to_parent_frame()
 
+    def click_insert_more_content_btn(self):
+        self.get_element(EditorLocators.insert_more_button).click()
+    def click_other_macros_btn(self):
+        self.wait_until_visible(EditorLocators.other_macros_button).click()
+
+    # On select macro dialog
+    def search_input(self, key:str):
+        self.wait_until_visible(EditorLocators.search_input).send_keys(key)
+    # def select_app(self, name: str):
+    #     app_loc = (EditorLocators.generate_app_locator_by_name(name))
+    #     app = self.get_element(app_loc)
+    #     app.click()
+    def click_macros_app(self):
+        self.wait_until_visible(EditorLocators.macro_advanced_tabs).click()
+    def click_tabs(self):
+        self.wait_until_visible(EditorLocators.macro_tabs).click()
+    # input Tab Name on INsert `Tab` Macro
+    def tab_name_input(self, key:str):
+        self.wait_until_visible(EditorLocators.input_tab_name).send_keys(key)
+    def click_insert_btn(self):
+        self.wait_until_visible(EditorLocators.insert_btn).click()
+
     def click_submit(self):
         self.get_element(EditorLocators.publish_button).click()
 
@@ -154,7 +184,8 @@ class Editor(BasePage):
         self.get_element(EditorLocators.publish_button).click()
         if self.get_elements(EditorLocators.confirm_publishing_button):
             if self.get_element(EditorLocators.confirm_publishing_button).is_displayed():
-                self.get_element(EditorLocators.confirm_publishing_button).click()
+                self.get_element(
+                    EditorLocators.confirm_publishing_button).click()
         self.wait_until_invisible(EditorLocators.save_spinner)
         self.wait_until_any_ec_presented(selectors=[PageLocators.page_title,
                                                     EditorLocators.confirm_publishing_button])

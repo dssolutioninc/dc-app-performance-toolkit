@@ -1,8 +1,12 @@
 import random
 from selenium_ui.conftest import print_timing, measure_browser_navi_metrics, measure_dom_requests
+from selenium.webdriver.common.by import By
+
 
 from selenium_ui.confluence.pages.pages import Login, AllUpdates, PopupManager, Page, Dashboard, TopNavPanel, Editor, \
     Logout
+from selenium_ui.confluence.pages.selectors import EditorLocators
+from selenium_ui.base_page import BasePage
 from util.api.confluence_clients import ConfluenceRestClient
 from util.confluence.browser_metrics import browser_metrics
 from util.conf import CONFLUENCE_SETTINGS
@@ -56,11 +60,13 @@ def login(webdriver, datasets):
             node_ip = rest_client.get_node_ip(node_id)
             webdriver.node_ip = node_ip
             print(f"node_id:{node_id}, node_ip: {webdriver.node_ip}")
-            measure_dom_requests(webdriver, interaction="selenium_login:open_login_page")
+            measure_dom_requests(
+                webdriver, interaction="selenium_login:open_login_page")
 
         sub_measure()
 
-        login_page.set_credentials(username=datasets['username'], password=datasets['password'])
+        login_page.set_credentials(
+            username=datasets['username'], password=datasets['password'])
 
         def sub_measure():
             login_page.click_login_button()
@@ -68,9 +74,11 @@ def login(webdriver, datasets):
                 login_page.first_user_setup()
             all_updates_page = AllUpdates(webdriver)
             all_updates_page.wait_for_page_loaded()
-            measure_dom_requests(webdriver, interaction="selenium_login:login_and_view_dashboard")
+            measure_dom_requests(
+                webdriver, interaction="selenium_login:login_and_view_dashboard")
             if CONFLUENCE_SETTINGS.extended_metrics:
-                measure_browser_navi_metrics(webdriver, datasets, expected_metrics=browser_metrics['selenium_login'])
+                measure_browser_navi_metrics(
+                    webdriver, datasets, expected_metrics=browser_metrics['selenium_login'])
 
         sub_measure()
 
@@ -89,9 +97,11 @@ def view_page(webdriver, datasets):
     def measure():
         page.go_to()
         page.wait_for_page_loaded()
-        measure_dom_requests(webdriver, interaction=f"selenium_view_page", description=page_description)
+        measure_dom_requests(
+            webdriver, interaction=f"selenium_view_page", description=page_description)
         if CONFLUENCE_SETTINGS.extended_metrics:
-            measure_browser_navi_metrics(webdriver, datasets, expected_metrics=browser_metrics['selenium_view_page'])
+            measure_browser_navi_metrics(
+                webdriver, datasets, expected_metrics=browser_metrics['selenium_view_page'])
 
     measure()
 
@@ -107,7 +117,8 @@ def view_page_from_cache(webdriver, datasets):
     def measure():
         page.go_to()
         page.wait_for_page_loaded()
-        measure_dom_requests(webdriver, interaction=f"selenium_view_page_from_cache", description=page_description)
+        measure_dom_requests(
+            webdriver, interaction=f"selenium_view_page_from_cache", description=page_description)
         if CONFLUENCE_SETTINGS.extended_metrics:
             measure_browser_navi_metrics(webdriver, datasets,
                                          expected_metrics=browser_metrics['selenium_view_page_from_cache'])
@@ -125,9 +136,11 @@ def view_blog(webdriver, datasets):
     def measure():
         blog.go_to()
         blog.wait_for_page_loaded()
-        measure_dom_requests(webdriver, interaction=f"selenium_view_blog", description=blog_description)
+        measure_dom_requests(
+            webdriver, interaction=f"selenium_view_blog", description=blog_description)
         if CONFLUENCE_SETTINGS.extended_metrics:
-            measure_browser_navi_metrics(webdriver, datasets, expected_metrics=browser_metrics['selenium_view_blog'])
+            measure_browser_navi_metrics(
+                webdriver, datasets, expected_metrics=browser_metrics['selenium_view_blog'])
 
     measure()
 
@@ -155,7 +168,8 @@ def create_confluence_page(webdriver, datasets):
             nav_panel.click_create()
             PopupManager(webdriver).dismiss_default_popup()
             create_page.wait_for_create_page_open()
-            measure_dom_requests(webdriver, interaction="selenium_create_page:open_create_page_editor")
+            measure_dom_requests(
+                webdriver, interaction="selenium_create_page:open_create_page_editor")
             if CONFLUENCE_SETTINGS.extended_metrics:
                 measure_browser_navi_metrics(webdriver, datasets,
                                              expected_metrics=browser_metrics['selenium_create_page'])
@@ -171,7 +185,8 @@ def create_confluence_page(webdriver, datasets):
             create_page.click_submit()
             page = Page(webdriver)
             page.wait_for_page_loaded()
-            measure_dom_requests(webdriver, interaction="selenium_create_page:save_created_page")
+            measure_dom_requests(
+                webdriver, interaction="selenium_create_page:save_created_page")
 
         sub_measure()
 
@@ -207,6 +222,147 @@ def edit_confluence_page_by_url(webdriver, datasets):
         sub_measure()
 
     measure()
+
+
+def action_for_macros(webdriver, datasets):
+    tab_a = "Tab A"
+    tab_b = "Tab B"
+    
+    def create_page():
+        nav_panel = TopNavPanel(webdriver)
+        create_page = Editor(webdriver)
+
+        def measure():
+            def sub_measure():
+                nav_panel.click_create()
+                PopupManager(webdriver).dismiss_default_popup()
+                create_page.wait_for_create_page_open()
+                measure_dom_requests(
+                    webdriver, interaction="selenium_create_page:open_create_page_editor")
+                if CONFLUENCE_SETTINGS.extended_metrics:
+                    measure_browser_navi_metrics(webdriver, datasets,
+                                                expected_metrics=browser_metrics['selenium_create_page'])
+
+            sub_measure()
+
+            PopupManager(webdriver).dismiss_default_popup()
+
+            def write_title():
+                title_field = BasePage(webdriver).wait_until_visible(EditorLocators.title_field)
+                title = "Selenium45 - " + BasePage(webdriver).generate_random_string(10)
+                title_field.clear()
+                title_field.send_keys(title)
+
+            write_title()
+
+            def click_publish():
+                create_page.click_submit()
+                page = Page(webdriver)
+                page.wait_for_page_loaded()
+                measure_dom_requests(
+                    webdriver, interaction="selenium_create_page:save_created_page")
+
+            click_publish()
+
+        measure()
+
+    def go_to_edit_page():
+        page = Page(webdriver)
+        edit_page = Editor(webdriver)
+        page.click_edit()
+        edit_page.wait_for_page_loaded()
+
+    def add_advanded_tabs():
+        edit_page = Editor(webdriver)
+        edit_page.click_insert_more_content_btn()
+        edit_page.click_other_macros_btn()
+        edit_page.search_input("Advanced Tabs")
+        edit_page.click_macros_app()
+        edit_page.click_insert_btn()
+        BasePage(webdriver).wait_until_available_to_switch(EditorLocators.page_content_field)
+        advanced_input_loc = (By.XPATH, '//table[@data-macro-name= "advanced-tabs"]//td[@class = "wysiwyg-macro-body"]/p')
+        advanced_input = BasePage(webdriver).get_element(advanced_input_loc)
+        advanced_input.click()
+        def generate_loc__input_text_of_tabs(tab_name:str):
+            input_text_tabs_loc = (By.XPATH, f'//table[@data-macro-parameters = "tabName={tab_name}"]//p')
+            return input_text_tabs_loc
+        def generate_loc__space_behind_one_tab(tab_name:str):
+            space_behind_tab = (By.XPATH, f'//table[@data-macro-parameters = "tabName={tab_name}"]/following-sibling::p[@class = "auto-cursor-target"]')
+            return space_behind_tab
+        def add_two_tabs():
+            
+            # insert `tab a` + content
+            BasePage(webdriver).return_to_parent_frame()
+            edit_page.click_insert_more_content_btn()
+            edit_page.click_other_macros_btn()
+            edit_page.search_input("Tabs")
+            edit_page.click_tabs()
+            edit_page.tab_name_input(tab_a)
+            edit_page.click_insert_btn()
+            BasePage(webdriver).wait_until_available_to_switch(EditorLocators.page_content_field)
+            input_text_of_tabs = BasePage(webdriver).get_element(generate_loc__input_text_of_tabs(tab_a))
+            input_text_of_tabs.click()
+            input_text_of_tabs.send_keys(tab_a)
+            # insert `tab_b` + content
+            space_behinh = BasePage(webdriver).wait_until_visible(generate_loc__space_behind_one_tab(tab_a))
+            space_behinh.click()
+            BasePage(webdriver).return_to_parent_frame()
+            edit_page.click_insert_more_content_btn()
+            edit_page.click_other_macros_btn()
+            edit_page.search_input("Tabs")
+            edit_page.click_tabs()
+            edit_page.tab_name_input(tab_b)
+            edit_page.click_insert_btn()
+            BasePage(webdriver).wait_until_available_to_switch(EditorLocators.page_content_field)
+            input_text_of_tabs = BasePage(webdriver).get_element(generate_loc__input_text_of_tabs(tab_b))
+            input_text_of_tabs.click()
+            input_text_of_tabs.send_keys(tab_b)
+            BasePage(webdriver).return_to_parent_frame()
+        add_two_tabs()
+
+    def update():
+        edit_page = Editor(webdriver)
+        edit_page.save_edited_page()
+        measure_dom_requests(
+            webdriver, interaction=f"selenium_edit_page_by_url:save_edited_page")
+        
+    def verify_data():
+        def generate_loc__tabs_in_list(tab_name: str):
+            tab_in_list_loc = (By.XPATH, f'//ul[@class="tabs-menu"]//a[text()="{tab_name}"]')
+            return tab_in_list_loc
+        def generate_loc__contents_of_list(tab_name: str):
+            content = (By.XPATH, f'//div[@data-tab-name = "{tab_name}"]')
+            return content
+        # verify tab_a
+        first_tab = BasePage(webdriver).get_element(generate_loc__tabs_in_list(tab_a))
+        first_tab.click()
+        assert first_tab.get_attribute("aria-selected") == "true"
+        content_of_first_tab = BasePage(webdriver).get_element(generate_loc__contents_of_list(tab_a))
+        assert content_of_first_tab.text == tab_a
+        # verify tab_b
+        second_tab = BasePage(webdriver).get_element(generate_loc__tabs_in_list(tab_b))
+        second_tab.click()
+        assert second_tab.get_attribute("aria-selected") == "true"
+        content_of_second_tab = BasePage(webdriver).get_element(generate_loc__contents_of_list(tab_b))
+        assert content_of_second_tab.text == tab_b
+        
+    def delete_page():
+        more_option_loc = (By.XPATH, '//a[@id = "action-menu-link"]')
+        more_option_ele = BasePage(webdriver).get_element(more_option_loc)
+        more_option_ele.click()
+        delete_page_loc = (By.XPATH, '//a[@id = "action-remove-content-link"]')
+        BasePage(webdriver).get_element(delete_page_loc).click()
+        delete_page_confirm_btn = (By.XPATH, '//button[@id = "delete-dialog-next"]')
+        BasePage(webdriver).wait_until_visible(delete_page_confirm_btn).click()
+        confirm_message_loc = (By.XPATH, '//div[@class = "aui-message closeable aui-message-success"]/p[2]')
+        confirm_message_ele = BasePage(webdriver).wait_until_visible(confirm_message_loc)
+        assert confirm_message_ele.text == "Space admins can restore this page from the trash."
+    create_page()
+    go_to_edit_page()
+    add_advanded_tabs()
+    update()
+    verify_data()
+    delete_page()
 
 
 def edit_confluence_page_quick_edit(webdriver, datasets):

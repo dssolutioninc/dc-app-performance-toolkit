@@ -77,6 +77,22 @@ class TopPanelLocators:
 
 
 class EditorLocators:
+    insert_more_button = (By.ID, "rte-button-insert")
+    # on insert more dropdown options
+    other_macros_button = (By.ID, "rte-insert-macro")
+
+    # On select macro dialog
+    search_input = (By.ID, "macro-browser-search")
+    # def generate_app_locator_by_name(self, name: str):
+    #     """Generates locator for app in select macro dialog"""
+    #     app_locator = By.XPATH, f'.//li[@class = "macro-list-item"]//h4[text()="{name}"]'
+    #     return app_locator  
+    insert_btn = (By.XPATH, './/button[text() = "Insert"]')
+    macro_advanced_tabs = (By.ID, "macro-advanced-tabs" )
+    macro_tabs = (By.ID, "macro-advanced-tabs-tab")
+    # add Tabs, input Tab Name
+    input_tab_name = (By.ID, "macro-param-tabName")
+
     publish_button = (By.ID, "rte-button-publish")
     confirm_publishing_button = (By.ID, "qed-publish-button")
     title_field = (By.ID, "content-title")

@@ -47,6 +47,8 @@ Refer to `app/selenium_ui/confluence/modules.py` for examples.
 # def test_1_selenium_custom_action(confluence_webdriver, confluence_datasets, confluence_screen_shots):
 #     extension_ui.app_specific_action(confluence_webdriver, confluence_datasets)
 
+def test_1_selenium_custom_action_for_macros(confluence_webdriver, confluence_datasets, confluence_screen_shots):
+    modules.action_for_macros(confluence_webdriver, confluence_datasets)
 
 # this action should be the last one
 def test_2_selenium_z_log_out(confluence_webdriver, confluence_datasets, confluence_screen_shots):
