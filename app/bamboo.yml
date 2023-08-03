@@ -14,9 +14,9 @@ settings:
     admin_password: admin
     load_executor: jmeter
     concurrency: 200                   # number of Bamboo users for Selenium actions
-    test_duration: 15m
-    ramp-up: 30s                        # time to spin all concurrent threads
-    total_actions_per_hour: 50       # number of total JMeter actions per hour
+    test_duration: 5m
+    ramp-up: 3s                        # time to spin all concurrent threads
+    total_actions_per_hour: 5450       # number of total JMeter actions per hour
     WEBDRIVER_VISIBLE: False
     JMETER_VERSION: 5.4.3
     LANGUAGE: en_US.utf8
