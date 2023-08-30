@@ -244,3 +244,11 @@ class JiraRestClient(RestClient):
         if jira_system_page.count(html_pattern):
             return 'terraform'
         return 'other'
+    
+    def create_organization(self, organization_name=''):
+        api_url = self._host + "/rest/servicedeskapi/organization"
+        payload = { 'name' : organization_name }
+
+        response = self.post(api_url, "Could not create custom field", body=payload, headers=JSM_EXPERIMENTAL_HEADERS, auth=('admin', 'admin'))
+        
+        return response.json()

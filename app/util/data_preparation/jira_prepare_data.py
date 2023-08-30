@@ -1,11 +1,12 @@
 import random
 import string
+import time
 
 from prepare_data_common import __generate_random_string, __write_to_file, __warnings_filter
 from util.api.jira_clients import JiraRestClient
 from util.conf import JIRA_SETTINGS
 from util.project_paths import JIRA_DATASET_JQLS, JIRA_DATASET_SCRUM_BOARDS, JIRA_DATASET_KANBAN_BOARDS, \
-    JIRA_DATASET_USERS, JIRA_DATASET_ISSUES, JIRA_DATASET_PROJECTS, JIRA_DATASET_CUSTOM_ISSUES
+    JIRA_DATASET_USERS, JIRA_DATASET_ISSUES, JIRA_DATASET_PROJECTS, JIRA_DATASET_CUSTOM_ISSUES, JIRA_DATASET_ORGANIZATION
 
 __warnings_filter()
 
@@ -16,12 +17,15 @@ ISSUES = "issues"
 JQLS = "jqls"
 PROJECTS = "projects"
 CUSTOM_ISSUES = "custom_issues"
+ORGANIZATION = "organizations"
 
 DEFAULT_USER_PASSWORD = 'password'
 DEFAULT_USER_PREFIX = 'performance_'
 ERROR_LIMIT = 10
 
 ENGLISH = 'en_US'
+
+DEFAULT_ORGANIZATION_PREFIX = 'organization_'
 
 
 def __generate_jqls(max_length=3, count=100):
@@ -57,6 +61,25 @@ def generate_perf_users(cur_perf_user, api):
         print('All performance test users were successfully created')
         return cur_perf_user
 
+def generate_perf_organization(api, cur_perf_organization):
+    ts = int(time.time())
+    errors_count = 0
+    if errors_count >= ERROR_LIMIT:
+        raise Exception(f'ERROR: Maximum error limit reached {errors_count}/{ERROR_LIMIT}. '
+                        f'Please check the errors in bzt.log')
+    organization_name = f"{DEFAULT_ORGANIZATION_PREFIX}{__generate_random_string(10)}_{ts}"
+    try:
+
+        organization = api.create_organization(organization_name=organization_name)
+
+        print(f"organization name {organization['name']} is created")
+        cur_perf_organization.append(organization)
+    # To avoid rate limit error from server. Execution should not be stopped after catch error from server.
+    except Exception as error:
+        print(f"Warning: Create jira custom field error: {error}. Retry limits {errors_count}/{ERROR_LIMIT}")
+        errors_count = errors_count + 1
+
+    return cur_perf_organization
 
 def write_test_data_to_files(datasets):
     __write_to_file(JIRA_DATASET_JQLS, datasets[JQLS])
@@ -79,6 +102,9 @@ def write_test_data_to_files(datasets):
     keys = datasets[PROJECTS]
     __write_to_file(JIRA_DATASET_PROJECTS, keys)
 
+    organizations = [f"{organization['id']},{organization['name']}" for organization in datasets[ORGANIZATION]]
+    __write_to_file(JIRA_DATASET_ORGANIZATION, organizations)
+
 
 def __create_data_set(jira_api):
     dataset = dict()
@@ -92,6 +118,7 @@ def __create_data_set(jira_api):
     dataset[SCRUM_BOARDS] = __get_boards(perf_user_api, 'scrum')
     dataset[KANBAN_BOARDS] = __get_boards(perf_user_api, 'kanban')
     dataset[JQLS] = __generate_jqls(count=150)
+    dataset[ORGANIZATION] = __get_organizations(perf_user_api)
     print(f'Users count: {len(dataset[USERS])}')
     print(f'Projects: {len(dataset[PROJECTS])}')
     print(f'Issues count: {len(dataset[ISSUES])}')
@@ -154,6 +181,16 @@ def __get_software_projects(jira_api):
             f"There are no software projects in Jira accessible by a random performance user: {jira_api.user}")
     return software_projects
 
+def __get_organizations(jira_api):
+    
+    result_list = []
+    for num in range(1, 10):
+        organization = generate_perf_organization(api=jira_api, cur_perf_organization=[])
+        result_list.extend(organization)
+    if not result_list:
+        raise SystemExit(f"There are no custom fields created base on Project Specific's fields: {jira_api.user}")
+    print("list organization: ", result_list)
+    return result_list
 
 def __check_current_language(jira_api):
     language = jira_api.get_locale()

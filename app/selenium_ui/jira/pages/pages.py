@@ -201,7 +201,10 @@ class Project(BasePage):
         BasePage.__init__(self, driver)
         url_manager = UrlManager(project_key=project_key)
         self.page_url = url_manager.project_summary_url()
+        self.project_specific_custom_field_context_url = url_manager.rules_configuration()
 
+    def go_to_organization_service_configuration__context(self):
+        self.go_to_url(self.project_specific_custom_field_context_url)
 
 class ProjectsList(BasePage):
 

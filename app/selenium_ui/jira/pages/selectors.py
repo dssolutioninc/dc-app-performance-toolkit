@@ -26,6 +26,7 @@ class UrlManager:
         self.boards_list_params = '/secure/ManageRapidViews.jspa'
         self.scrum_board_backlog_params = f"/secure/RapidBoard.jspa?rapidView={board_id}&view=planning"
         self.scrum_board_params = f"/secure/RapidBoard.jspa?rapidView={board_id}"
+        self.rules_configuration_params = "/secure/AddCustomerWebAction.jspa"
 
     def login_url(self):
         return f"{self.host}{self.login_params}"
@@ -62,6 +63,9 @@ class UrlManager:
 
     def logout_url(self):
         return f"{self.host}{self.logout_params}"
+    
+    def rules_configuration(self):
+        return f"{self.host}{self.rules_configuration_params}"
 
 
 class LoginPageLocators:
