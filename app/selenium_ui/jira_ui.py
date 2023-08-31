@@ -62,7 +62,7 @@ Refer to `app/selenium_ui/jira/modules.py` for examples.
 """
 
 
-def test_1_selenium_custom_action(jira_webdriver, jira_datasets, jira_screen_shots):
+def test_1_selenium_view_rules_configuraion(jira_webdriver, jira_datasets, jira_screen_shots):
     extension_ui.test_view_rules_configuration(jira_webdriver, jira_datasets)
 
 

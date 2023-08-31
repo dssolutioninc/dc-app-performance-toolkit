@@ -12,7 +12,7 @@ def test_view_rules_configuration(webdriver, datasets):
     page = BasePage(webdriver)
     project_organization = Project(webdriver, project_key=datasets['project_key'])
 
-    @print_timing("selenium_app_custom_action")
+    @print_timing("selenium_app_customer_organization")
 
     def measure_user_login():
         login_page = Login(webdriver)

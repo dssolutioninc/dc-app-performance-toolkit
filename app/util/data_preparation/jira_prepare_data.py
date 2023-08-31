@@ -188,7 +188,7 @@ def __get_organizations(jira_api):
         organization = generate_perf_organization(api=jira_api, cur_perf_organization=[])
         result_list.extend(organization)
     if not result_list:
-        raise SystemExit(f"There are no custom fields created base on Project Specific's fields: {jira_api.user}")
+        raise SystemExit(f"There are no organization on Project customer organization: {jira_api.user}")
     print("list organization: ", result_list)
     return result_list
 
