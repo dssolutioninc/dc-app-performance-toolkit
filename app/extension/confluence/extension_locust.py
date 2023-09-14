@@ -11,7 +11,7 @@ def advanced_collaborative_table_updater(locust):
 
     payload={'spaceKey': 'QT'}
     files=[
-        ('csvFile',('actu_sample_data.csv',open("././datasets/confluence/actu_sample_data.csv",'rb'),'text/csv'))
+        ('csvFile',('actu_sample_data.csv',open("././datasets/actu_sample_data.csv",'rb'),'text/csv'))
     ]
     headers = {
         'Accept': 'application/json, text/javascript, */*; q=0.01',
