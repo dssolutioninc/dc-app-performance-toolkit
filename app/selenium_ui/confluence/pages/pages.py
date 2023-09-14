@@ -158,3 +158,9 @@ class Editor(BasePage):
         self.wait_until_invisible(EditorLocators.save_spinner)
         self.wait_until_any_ec_presented(selectors=[PageLocators.page_title,
                                                     EditorLocators.confirm_publishing_button])
+        
+class AdvancedCollaborativeTableUpdater(BasePage):
+    advanced_collaborative_table_handle_url = UrlManager().advanced_collaborative_table_handler_url()
+
+    def go_to_advanced_collaborative_table_handle(self):
+        self.go_to_url(self.advanced_collaborative_table_handle_url)

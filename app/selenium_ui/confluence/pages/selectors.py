@@ -11,6 +11,7 @@ class UrlManager:
         self.dashboard_params = '/dashboard.action#all-updates'
         self.edit_page_params = f'/pages/editpage.action?pageId={page_id}'
         self.logout_params = "/logout.action"
+        self.advanced_collaborative_table_handler_params = "/plugins/advanced-collaborative-table-updater/actu.action"
 
     def login_url(self):
         return f"{self.host}{self.login_params}"
@@ -26,6 +27,9 @@ class UrlManager:
 
     def logout_url(self):
         return f"{self.host}{self.logout_params}"
+    
+    def advanced_collaborative_table_handler_url(self):
+        return f"{self.host}{self.advanced_collaborative_table_handler_params}"
 
 
 class PopupLocators:
