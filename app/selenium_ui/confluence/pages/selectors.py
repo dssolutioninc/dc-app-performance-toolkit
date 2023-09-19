@@ -11,6 +11,7 @@ class UrlManager:
         self.dashboard_params = '/dashboard.action#all-updates'
         self.edit_page_params = f'/pages/editpage.action?pageId={page_id}'
         self.logout_params = "/logout.action"
+        self.status_macro_configuration_param = "/plugins/servlet/xalt-status-macro/admin"
 
     def login_url(self):
         return f"{self.host}{self.login_params}"
@@ -26,6 +27,9 @@ class UrlManager:
 
     def logout_url(self):
         return f"{self.host}{self.logout_params}"
+
+    def status_macro_configuration_url(self):
+        return f"{self.host}{self.status_macro_configuration_param}"
 
 
 class PopupLocators:

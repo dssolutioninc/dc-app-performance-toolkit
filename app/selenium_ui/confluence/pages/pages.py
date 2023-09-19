@@ -158,3 +158,9 @@ class Editor(BasePage):
         self.wait_until_invisible(EditorLocators.save_spinner)
         self.wait_until_any_ec_presented(selectors=[PageLocators.page_title,
                                                     EditorLocators.confirm_publishing_button])
+
+class StatusMacroConfiguration(BasePage):
+    status_macro_configuration_url = UrlManager().status_macro_configuration_url()
+
+    def go_to_status_macro_configuration(self):
+        self.go_to_url(self.status_macro_configuration_url)
