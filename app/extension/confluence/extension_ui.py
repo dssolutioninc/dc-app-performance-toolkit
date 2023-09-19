@@ -22,6 +22,8 @@ def test_1_view_status_macro_configuration(webdriver, datasets):
         login_page.click_login_button()
         if login_page.is_first_login():
             login_page.first_user_setup()
+        all_updates_page = AllUpdates(webdriver)
+        all_updates_page.wait_for_page_loaded()
         status_macro_configuration.go_to_status_macro_configuration()
         status_macro_configuration.wait_until_present((By.ID, "admin-heading-container"))
     measure()
