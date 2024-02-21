@@ -201,6 +201,21 @@ class Project(BasePage):
         BasePage.__init__(self, driver)
         url_manager = UrlManager(project_key=project_key)
         self.page_url = url_manager.project_summary_url()
+        self.project_specific_statistics_url = url_manager.project_specific_statistics_url()
+        self.project_specific_manage_options_url = url_manager.project_specific_manage_options_url()
+        self.project_specific_custom_field_context_url = url_manager.project_specific_custom_field_context_url()
+
+    def go_to_project_specific_statistics(self):
+        self.go_to_url(self.project_specific_statistics_url)
+    
+    def go_to_project_specific_manage_options(self):
+        self.go_to_url(self.project_specific_manage_options_url)
+
+    def go_to_project_specific_custom_field_context(self):
+        self.go_to_url(self.project_specific_custom_field_context_url)
+
+    def wait_for_project_specific(self):
+        self.wait_until_present(ProjectLocators.project_specific_content)
 
 
 class ProjectsList(BasePage):

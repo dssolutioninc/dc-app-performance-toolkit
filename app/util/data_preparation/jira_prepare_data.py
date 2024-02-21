@@ -5,7 +5,7 @@ from prepare_data_common import __generate_random_string, __write_to_file, __war
 from util.api.jira_clients import JiraRestClient
 from util.conf import JIRA_SETTINGS
 from util.project_paths import JIRA_DATASET_JQLS, JIRA_DATASET_SCRUM_BOARDS, JIRA_DATASET_KANBAN_BOARDS, \
-    JIRA_DATASET_USERS, JIRA_DATASET_ISSUES, JIRA_DATASET_PROJECTS, JIRA_DATASET_CUSTOM_ISSUES
+    JIRA_DATASET_USERS, JIRA_DATASET_ISSUES, JIRA_DATASET_PROJECTS, JIRA_DATASET_CUSTOM_ISSUES, JIRA_DATASET_CUSTOM_FIELDS
 
 __warnings_filter()
 
@@ -16,12 +16,22 @@ ISSUES = "issues"
 JQLS = "jqls"
 PROJECTS = "projects"
 CUSTOM_ISSUES = "custom_issues"
+CUSTOM_FIELDS = "custom_fields"
 
 DEFAULT_USER_PASSWORD = 'password'
 DEFAULT_USER_PREFIX = 'performance_'
+DEFAULT_CUSTOM_FIELD_PREFIX = 'custom_field_'
 ERROR_LIMIT = 10
 
 ENGLISH = 'en_US'
+
+SELECT_FIELD_SIMPLE = "jira.plugin.projectspecificselectfield.jpssf:cftype"
+SELECT_FIELD = "jira.plugin.projectspecificselectfield.jpssf:singlecftype"
+MULTI_SELECT_FIELD = "jira.plugin.projectspecificselectfield.jpssf:multicftype"
+
+SELECT_FIELD_SIMPLE_NAME = 'Select Field (simple)'
+SELECT_FIELD_NAME = 'Select Field'
+MULTI_SELECT_FIELD_NAME = 'Multi Select Field'
 
 
 def __generate_jqls(max_length=3, count=100):
@@ -56,6 +66,47 @@ def generate_perf_users(cur_perf_user, api):
                 errors_count = errors_count + 1
         print('All performance test users were successfully created')
         return cur_perf_user
+    
+    
+def generate_perf_custom_fields(api, cur_perf_custom_fields, custom_field_type):
+    errors_count = 0
+    if errors_count >= ERROR_LIMIT:
+        raise Exception(f'ERROR: Maximum error limit reached {errors_count}/{ERROR_LIMIT}. '
+                        f'Please check the errors in bzt.log')
+    custom_field_name = f"{DEFAULT_CUSTOM_FIELD_PREFIX}{__generate_random_string(10)}"
+    try:
+        if custom_field_type == SELECT_FIELD_SIMPLE:
+            custom_field_property = {
+                "description": "Custom field type: Project Specific Select Field (simple)",
+                "name": custom_field_name,
+                "type": SELECT_FIELD_SIMPLE
+            }
+        elif custom_field_type == SELECT_FIELD:
+            custom_field_property = {
+                "description": "Custom field type: Project Specific Select Field",
+                "name": custom_field_name,
+                "type": SELECT_FIELD
+            }
+        elif custom_field_type == MULTI_SELECT_FIELD:
+            custom_field_property = {
+                "description": "Custom field type: Project Specific Multi Select Field",
+                "name": custom_field_name,
+                "type": MULTI_SELECT_FIELD
+            }
+        custom_field = api.create_custom_field(custom_field_property=custom_field_property)
+
+        # add custom field to all screen
+        api.add_custom_field_to_all_screen(custom_field)
+
+        print(f"Custom field {custom_field['name']} is created")
+        cur_perf_custom_fields.append(custom_field)
+    # To avoid rate limit error from server. Execution should not be stopped after catch error from server.
+    except Exception as error:
+        print(f"Warning: Create jira custom field error: {error}. Retry limits {errors_count}/{ERROR_LIMIT}")
+        errors_count = errors_count + 1
+
+    return cur_perf_custom_fields
+
 
 
 def write_test_data_to_files(datasets):
@@ -78,6 +129,9 @@ def write_test_data_to_files(datasets):
 
     keys = datasets[PROJECTS]
     __write_to_file(JIRA_DATASET_PROJECTS, keys)
+    
+    custom_fields = [f"{custom_field['id']},{custom_field['name']},{custom_field['schema']['custom']}" for custom_field in datasets[CUSTOM_FIELDS]]
+    __write_to_file(JIRA_DATASET_CUSTOM_FIELDS, custom_fields)
 
 
 def __create_data_set(jira_api):
@@ -92,6 +146,7 @@ def __create_data_set(jira_api):
     dataset[SCRUM_BOARDS] = __get_boards(perf_user_api, 'scrum')
     dataset[KANBAN_BOARDS] = __get_boards(perf_user_api, 'kanban')
     dataset[JQLS] = __generate_jqls(count=150)
+    dataset[CUSTOM_FIELDS] = __get_custom_fields(perf_user_api)
     print(f'Users count: {len(dataset[USERS])}')
     print(f'Projects: {len(dataset[PROJECTS])}')
     print(f'Issues count: {len(dataset[ISSUES])}')
@@ -153,6 +208,17 @@ def __get_software_projects(jira_api):
         raise SystemExit(
             f"There are no software projects in Jira accessible by a random performance user: {jira_api.user}")
     return software_projects
+
+def __get_custom_fields(jira_api):
+    result_list = []
+    custom_field_types = [SELECT_FIELD, SELECT_FIELD_SIMPLE, MULTI_SELECT_FIELD]
+    for custom_field_type in custom_field_types:
+        custom_fields = generate_perf_custom_fields(api=jira_api, cur_perf_custom_fields=[], custom_field_type=custom_field_type)
+        result_list.extend(custom_fields)
+    if not result_list:
+        raise SystemExit(f"There are no custom fields created base on Project Specific's fields: {jira_api.user}")
+
+    return result_list
 
 
 def __check_current_language(jira_api):
