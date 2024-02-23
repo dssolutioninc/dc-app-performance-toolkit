@@ -13,7 +13,7 @@ jira_dataset = jira_datasets()
 def version_manager(locust):
     ts = time.time()
     raise_if_login_failed(locust)
-    project_key = random.choice(jira_dataset['issues'])[2]
+    project_key = random.choice(["AANES", "AASSS", "ABICA", "ABYRAA", "AACIMA", "AAMMNA"])
     logger.locust_info(f'Testing project: {project_key}')
 
     # create version
