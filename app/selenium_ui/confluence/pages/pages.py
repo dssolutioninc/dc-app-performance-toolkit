@@ -160,3 +160,9 @@ class Editor(BasePage):
         self.wait_until_invisible(EditorLocators.save_spinner)
         self.wait_until_any_ec_presented(selectors=[PageLocators.page_title,
                                                     EditorLocators.confirm_publishing_button])
+        
+class AdvancedTabs(BasePage):
+    page_with_advanced_tabs_url = UrlManager().page_with_advanced_tabs_url()
+
+    def go_to_page_with_advanced_tabs(self):
+        self.go_to_url(self.page_with_advanced_tabs_url)

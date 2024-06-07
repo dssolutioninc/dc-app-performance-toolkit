@@ -10,13 +10,13 @@
 # Unique name of your enterprise-scale test cluster.
 # This value can not be altered after the configuration has been applied.
 # ! REQUIRED !
-environment_name = "dcapt-product"
+environment_name = "dcapt-confluence-product"
 
 # Supported products: jira, confluence, bitbucket, crowd and bamboo.
 # For JSM set product as jira.
 # e.g.: products = ["jira"]
 # ! REQUIRED !
-products = ["product-to-deploy"]
+products = ["confluence"]
 
 # License
 # To avoid storing license in a plain text file, we recommend storing it in an environment variable prefixed with `TF_VAR_` (i.e. `TF_VAR_jira_license`) and keep the below line commented out
@@ -24,7 +24,7 @@ products = ["product-to-deploy"]
 # ! IMPORTANT ! Please make sure valid license is used without spaces and new line symbols.
 # ! REQUIRED !
 jira_license = "jira-license"
-confluence_license = "confluence-license"
+confluence_license = "AAABiw0ODAoPeNp1UsluwjAUvOcrIvXSHkKdpA2LZKnUSSklEESALurFDQ8SCCbYMSr9+joY1EXi6JnxeN48X4xTaT5JZiLPdOyW22y5Nybxx6aDnBuDcKBltmE+LQFXiIU8C9UNH0TCs6KiMNmweS6BJWBeKh01CbAS+NV7ywx2NJcHA6NPM4UyqmTBZ5Hx/S/LemUZZgkwcYbMNTkFLqonHSOWHz8JSi7BSFSM2kCuP4BH84lQSmzZxk8CrYr4grJMHBG5YYvammZ3MyE2uazA2rLQVjQpsx3oW2rEUp0DNUR+9tYx4yMVKe4TRB6C9WgkHfq16jSL2WTKEJlE2+dOz7OH7XTSXvjT8JYui1Fjm/siLVm6vXZnb0XcE+9YZzh2Mt4XMKBrwCTq94MR6bZDzccl5apqPKe5gFODXR+HXT8OBlboINdVJTaNGPgOuGLuX5BjNV8j2+oOGp4VRrcdbVVtTi9Oj7yC/alt20OojhquaxtDyZOUCvj/H44FHUKe60clwn9TfQMnY9PHMCwCFHTK9Gbd3aiqLzE+twbJAuDn9eYtAhRv/EyZirGKkglZ6f6gNCE9p0r8jw==X02j7"
 bitbucket_license = "bitbucket-license"
 crowd_license = "crowd-license"
 bamboo_license = "bamboo-license"
@@ -34,7 +34,7 @@ bamboo_license = "bamboo-license"
 # Note: For initial installation this value needs to be set to 1 and it can be changed only after product is fully
 # installed and configured.
 jira_replica_count = 1
-confluence_replica_count = 1
+confluence_replica_count = 4
 bitbucket_replica_count = 1
 crowd_replica_count = 1
 

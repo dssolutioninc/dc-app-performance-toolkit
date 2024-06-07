@@ -11,6 +11,7 @@ class UrlManager:
         self.dashboard_params = '/dashboard.action#all-updates'
         self.edit_page_params = f'/pages/editpage.action?pageId={page_id}'
         self.logout_params = "/logout.action"
+        self.page_with_advanced_tabs_params = "/display/AWHEP/Test+app"
 
     def login_url(self):
         return f"{self.host}{self.login_params}"
@@ -26,6 +27,9 @@ class UrlManager:
 
     def logout_url(self):
         return f"{self.host}{self.logout_params}"
+    
+    def page_with_advanced_tabs_url(self):
+        return f"{self.host}{self.page_with_advanced_tabs_params}"
 
 
 class PopupLocators:
