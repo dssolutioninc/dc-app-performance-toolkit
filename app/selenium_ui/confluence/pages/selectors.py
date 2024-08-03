@@ -69,6 +69,8 @@ class PageLocators:
     search_results = (By.ID, "search-result-container")
     close_search_button = (By.ID, "search-drawer-close")
     empty_search_results = (By.CLASS_NAME, "captioned-image-component")
+    action_menu_link = (By.ID, "action-menu-link")
+    export_to_markdown_button = (By.ID, "export-to-markdown-btn")
 
 
 class DashboardLocators:

@@ -90,6 +90,10 @@ class Page(BasePage):
     def click_edit(self):
         self.wait_until_clickable(PageLocators.edit_page_button).click()
 
+    def click_export_to_markdown(self):
+        self.wait_until_clickable(PageLocators.action_menu_link).click()
+        self.wait_until_clickable(PageLocators.export_to_markdown_button).click()
+
     def wait_for_resources_loaded(self, timeout=5):
         start_time = time.time()
         print(f'Waiting for resources to be loaded: {timeout} s.')
