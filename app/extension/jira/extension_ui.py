@@ -22,7 +22,7 @@ def test_1_view_project_page_bpn(webdriver, datasets):
     def measure_global_page():
         # Global page
         page.go_to_url(f"{JIRA_SETTINGS.server_url}/secure/admin/BacklogPrioritizationAdminConfigAction.jspa")
-        page.wait_until_visible((By.ID, 'backlog-prio-iframe'))  # Wait for you app-specific UI element by ID selector
+        page.wait_until_visible((By.Class, 'aui-page-panel'))  # Wait for you app-specific UI element by ID selector
 
     measure_project_page()
     measure_global_page()
