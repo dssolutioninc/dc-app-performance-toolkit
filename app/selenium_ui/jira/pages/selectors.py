@@ -29,6 +29,7 @@ class UrlManager:
         self.scrum_board_backlog_params = f"/secure/RapidBoard.jspa?rapidView={board_id}&view=planning"
         self.scrum_board_params = f"/secure/RapidBoard.jspa?rapidView={board_id}"
         self.admin_system_params = f"/secure/admin/ViewApplicationProperties.jspa"
+        self.project_page_bpn_params = f"/projects/{project_key}?selectedItem=selectedItem=com.appbox.ai.backlog.prioritization:backlogPrioritization-project-sidebar"
 
     def login_url(self):
         return f"{self.host}{self.login_params}"
@@ -65,6 +66,9 @@ class UrlManager:
 
     def logout_url(self):
         return f"{self.host}{self.logout_params}"
+    
+    def project_page_bpn_url(self):
+        return f"{self.host}{self.project_page_bpn_params}"
 
     def admin_system_url(self):
         return f"{self.host}{self.admin_system_params}"
@@ -137,6 +141,7 @@ class ProjectLocators:
     # projects list locators
     projects_list = (By.CSS_SELECTOR, "tbody.projects-list")
     projects_not_found = (By.CLASS_NAME, "none-panel")
+    project_page_bpn_content = (By.CLASS_NAME, "aui-page-panel")
 
 
 class SearchLocators:
