@@ -26,6 +26,7 @@ class UrlManager:
         self.boards_list_params = '/secure/ManageRapidViews.jspa'
         self.scrum_board_backlog_params = f"/secure/RapidBoard.jspa?rapidView={board_id}&view=planning"
         self.scrum_board_params = f"/secure/RapidBoard.jspa?rapidView={board_id}"
+        self.application_setting_page_params = '/secure/PopalSushilDaiGlobalSetting.jspa'
 
     def login_url(self):
         return f"{self.host}{self.login_params}"
@@ -62,7 +63,9 @@ class UrlManager:
 
     def logout_url(self):
         return f"{self.host}{self.logout_params}"
-
+    
+    def application_setting_page_url(self):
+        return f"{self.host}{self.application_setting_page_params}"
 
 class LoginPageLocators:
     login_url = UrlManager().login_url()
@@ -128,6 +131,7 @@ class ProjectLocators:
     # projects list locators
     projects_list = (By.CSS_SELECTOR, "tbody.projects-list")
     projects_not_found = (By.CLASS_NAME, "none-panel")
+    application_setting_page_content = (By.CLASS_NAME, "aui-page-panel")
 
 
 class SearchLocators:

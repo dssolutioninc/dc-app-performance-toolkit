@@ -208,7 +208,13 @@ class Project(BasePage):
         BasePage.__init__(self, driver)
         url_manager = UrlManager(project_key=project_key)
         self.page_url = url_manager.project_summary_url()
+        self.application_setting_page_url = url_manager.application_setting_page_url()
 
+    def go_to_application_setting_page(self):
+        self.go_to_url(self.application_setting_page_url)
+
+    def wait_for_application_setting_page(self):
+        self.wait_until_present(ProjectLocators.application_setting_page_content)
 
 class ProjectsList(BasePage):
 
