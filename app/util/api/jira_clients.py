@@ -175,6 +175,33 @@ class JiraRestClient(RestClient):
 
         return response.json()
 
+    def create_custom_field(self, custom_field_property={}):
+        api_url = self._host + "/rest/api/2/field"
+        payload = custom_field_property
+
+        response = self.post(api_url, "Could not create custom field", body=payload, auth=('admin', 'admin'))
+
+        return response.json()
+
+    def add_custom_field_to_all_screen(self, custom_field):
+        # get all screens
+        screens_api_url = self._host + "/rest/api/2/screens"
+        screens_response = self.get(screens_api_url, "Could not get all screens", auth=('admin', 'admin'))
+        screens = screens_response.json()
+
+        for screen in screens:
+            # get screen tabs
+            screen_tabs_api_url = self._host + f"/rest/api/2/screens/{screen['id']}/tabs"
+            screen_tabs_response = self.get(screen_tabs_api_url, "Could not get all screen tabs", auth=('admin', 'admin'))
+            screen_tabs = screen_tabs_response.json()
+            for screen_tab in screen_tabs:
+                # add custom field to the given tab.
+                add_api_url =  self._host + f"/rest/api/2/screens/{screen['id']}/tabs/{screen_tab['id']}/fields"
+                payload = {
+                    "fieldId": custom_field['id']
+                }
+                add_response = self.post(add_api_url, f"Could not add custom field {custom_field['name']} to screen tabs", body=payload, auth=('admin', 'admin'))
+
     def get_all_projects(self):
         """
         :return: Returns the projects list of all project types - all categories
