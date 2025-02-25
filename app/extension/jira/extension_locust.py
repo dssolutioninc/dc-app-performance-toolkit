@@ -1,29 +1,58 @@
+import random
 import re
-from locustio.common_utils import init_logger, jira_measure, run_as_specific_user  # noqa F401
+from locustio.common_utils import init_logger, jira_measure, run_as_specific_user, raise_if_login_failed, RESOURCE_HEADERS, ADMIN_HEADERS  # noqa F401
+from locustio.jira.requests_params import jira_datasets
+import json
+import time
 
 logger = init_logger(app_type='jira')
-
-
-@jira_measure("locust_app_specific_action")
+jira_dataset = jira_datasets()
+@jira_measure("locust_version_manager")
 # @run_as_specific_user(username='admin', password='admin')  # run as specific user
-def app_specific_action(locust):
-    r = locust.get('/app/get_endpoint', catch_response=True)  # call app-specific GET endpoint
-    content = r.content.decode('utf-8')   # decode response content
+def version_manager(locust):
+    ts = time.time()
+    raise_if_login_failed(locust)
+    project_key = random.choice(["AANES", "AAETAA"])
+    logger.locust_info(f'Testing project: {project_key}')
 
-    token_pattern_example = '"token":"(.+?)"'
-    id_pattern_example = '"id":"(.+?)"'
-    token = re.findall(token_pattern_example, content)  # get TOKEN from response using regexp
-    id = re.findall(id_pattern_example, content)    # get ID from response using regexp
+    # create version
+    release_1_body = { "name": f"locust test release 1 {ts}", "status": "Unreleased" }
+    r = locust.post(f'/rest/versionmanager/1.0/versionmanager/{project_key}', json=release_1_body, headers=RESOURCE_HEADERS,auth=('admin', 'admin'), catch_response=True)
+    content = json.loads(r.content.decode('utf-8'))
+    release_1_id = content["id"]
+    assert content["name"] == f"locust test release 1 {ts}"
 
-    logger.locust_info(f'token: {token}, id: {id}')  # log info for debug when verbose is true in jira.yml file
-    if 'assertion string' not in content:
-        logger.error(f"'assertion string' was not found in {content}")
-    assert 'assertion string' in content  # assert specific string in response content
+    release_2_body = { "name": f"locust test release 2 {ts}", "status": "Unreleased" }
+    r = locust.post(f'/rest/versionmanager/1.0/versionmanager/{project_key}', json=release_2_body, headers=RESOURCE_HEADERS,auth=('admin', 'admin'), catch_response=True)
+    content = json.loads(r.content.decode('utf-8'))
+    release_2_id = content["id"]
+    assert content["name"] == f"locust test release 2 {ts}"
 
-    body = {"id": id, "token": token}  # include parsed variables to POST request body
-    headers = {'content-type': 'application/json'}
-    r = locust.post('/app/post_endpoint', body, headers, catch_response=True)  # call app-specific POST endpoint
-    content = r.content.decode('utf-8')
-    if 'assertion string after successful POST request' not in content:
-        logger.error(f"'assertion string after successful POST request' was not found in {content}")
-    assert 'assertion string after successful POST request' in content  # assertion after POST request
+    # update version
+    release_1_update_body = { "id": release_1_id, "name": f"locust test release 1 updated {ts}" }
+    r = locust.put(f'/rest/versionmanager/1.0/versionmanager/{project_key}/{release_1_id}', json=release_1_update_body, headers=RESOURCE_HEADERS,auth=('admin', 'admin'), catch_response=True)
+    content = json.loads(r.content.decode('utf-8'))
+    assert content["name"] == f"locust test release 1 updated {ts}"
+
+    release_2_update_body = { "id": release_2_id, "name": f"locust test release 2 updated {ts}" }
+    r = locust.put(f'/rest/versionmanager/1.0/versionmanager/{project_key}/{release_2_id}', json=release_2_update_body, headers=RESOURCE_HEADERS,auth=('admin', 'admin'), catch_response=True)
+    content = json.loads(r.content.decode('utf-8'))
+    assert content["name"] == f"locust test release 2 updated {ts}"
+
+    # # move version
+    # move_release_body = { "after": f"/jira/rest/versionmanager/1.0/versionmanager/{project_key}/{release_1_id}"}
+    # r = locust.post(f'/rest/versionmanager/1.0/versionmanager/{project_key}/{release_2_id}/move', json=move_release_body, headers=RESOURCE_HEADERS,auth=('admin', 'admin'), catch_response=True)
+
+    # delete version
+    r = locust.delete(f'/rest/versionmanager/1.0/versionmanager/{project_key}/{release_1_id}',json=None, headers=RESOURCE_HEADERS,auth=('admin', 'admin'), catch_response=True)
+    r = locust.delete(f'/rest/versionmanager/1.0/versionmanager/{project_key}/{release_2_id}',json=None, headers=RESOURCE_HEADERS,auth=('admin', 'admin'), catch_response=True)
+
+    # get version
+    r = locust.get(f'/rest/versionmanager/1.0/versionmanager/{project_key}',auth=('admin', 'admin'), catch_response=True)
+    content = json.loads(r.content.decode('utf-8'))
+    has_test_releases = False
+    for i in content:
+        if i["name"] == f"locust test release 1 updated {ts}" or i["name"] == f"locust test release 2 updated {ts}":
+            has_test_releases = True
+            break
+    assert has_test_releases == False
