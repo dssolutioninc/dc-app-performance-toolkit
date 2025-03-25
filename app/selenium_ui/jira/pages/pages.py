@@ -234,7 +234,13 @@ class Project(BasePage):
         BasePage.__init__(self, driver)
         url_manager = UrlManager(project_key=project_key)
         self.page_url = url_manager.project_summary_url()
+        self.project_role_tab_url = url_manager.project_role_tab_url()
 
+    def go_to_project_role_tab(self):
+        self.go_to_url(self.project_role_tab_url)
+
+    def wait_for_project_role_tab(self):
+        self.wait_until_present(ProjectLocators.project_role_tab_content)
 
 class ProjectsList(BasePage):
 
