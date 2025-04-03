@@ -1,29 +1,24 @@
 import re
-from locustio.common_utils import init_logger, jira_measure, run_as_specific_user  # noqa F401
+from locustio.common_utils import init_logger, jira_measure, raise_if_login_failed, RESOURCE_HEADERS  # noqa F401
+from locustio.jira.requests_params import jira_datasets
+import random
 
 logger = init_logger(app_type='jira')
 
+jira_dataset = jira_datasets()
 
-@jira_measure("locust_app_specific_action")
-# @run_as_specific_user(username='admin', password='admin')  # run as specific user
+
+@jira_measure("locust_purgo_ai_specific_action")
+# run as specific user
 def app_specific_action(locust):
-    r = locust.get('/app/get_endpoint', catch_response=True)  # call app-specific GET endpoint
-    content = r.content.decode('utf-8')   # decode response content
+    raise_if_login_failed(locust)
 
-    token_pattern_example = '"token":"(.+?)"'
-    id_pattern_example = '"id":"(.+?)"'
-    token = re.findall(token_pattern_example, content)  # get TOKEN from response using regexp
-    id = re.findall(id_pattern_example, content)    # get ID from response using regexp
+    project_key = random.choice(jira_dataset['projects'])[0]  # key or id
+    logger.locust_info(f'Testing for project: {project_key}')
 
-    logger.locust_info(f'token: {token}, id: {id}')  # log info for debug when verbose is true in jira.yml file
-    if 'assertion string' not in content:
-        logger.error(f"'assertion string' was not found in {content}")
-    assert 'assertion string' in content  # assert specific string in response content
+    # Get project config
+    url = f'/rest/purgo-ai/1.0/projectConfig/{project_key}'
 
-    body = {"id": id, "token": token}  # include parsed variables to POST request body
-    headers = {'content-type': 'application/json'}
-    r = locust.post('/app/post_endpoint', body, headers, catch_response=True)  # call app-specific POST endpoint
-    content = r.content.decode('utf-8')
-    if 'assertion string after successful POST request' not in content:
-        logger.error(f"'assertion string after successful POST request' was not found in {content}")
-    assert 'assertion string after successful POST request' in content  # assertion after POST request
+    # call app-specific GET endpoint
+    r = locust.get(url, headers=RESOURCE_HEADERS, auth=('admin', 'admin'), catch_response=True)
+    assert r.status_code == 200
