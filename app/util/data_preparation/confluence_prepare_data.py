@@ -79,6 +79,7 @@ def __create_data_set(rest_client, rpc_client):
     dataset[CQLS] = __generate_cqls(words_count=CQL_WORDS_COUNT)
 
     dataset[CUSTOM_PAGES] = __get_custom_pages(perf_user_api, 5000, CONFLUENCE_SETTINGS.custom_dataset_query)
+    __get_meetical_pages(rest_client, CONFLUENCE_SETTINGS.concurrency)
     print(f'Users count: {len(dataset[USERS])}')
     print(f'Pages count: {len(dataset[PAGES])}')
     print(f'Blogs count: {len(dataset[BLOGS])}')
@@ -236,6 +237,27 @@ def __check_for_admin_permissions(confluence_api):
     if 'confluence-administrators' not in groups:
         raise SystemExit(f"The '{confluence_api.user}' user does not have admin permissions.")
 
+def __get_meetical_pages(confluence_api, count):
+    errors_count = 0
+    meetical_pages = []
+
+    while len(meetical_pages) < 2:
+        if errors_count >= ERROR_LIMIT:
+            raise Exception(f'ERROR: Maximum error limit reached {errors_count}/{ERROR_LIMIT}. '
+                            f'Please check the errors in bzt.log')
+        title = f"{DEFAULT_USER_PREFIX}{__generate_random_string(10)}_page"
+        try:
+            meetical_page = confluence_api.create_meetical_page(title=title)
+            print('AFTER CALL: ', meetical_page)
+            print(f"Meetical page \"{meetical_page['title']}\" is created, number of Meetical pages to create is "
+                  f"{count - len(meetical_pages)}")
+            meetical_pages.append(meetical_page)
+        except Exception as error:
+            print(f"Warning: Create Meetical page error: {error}. Retry limits {errors_count}/{ERROR_LIMIT}")
+            errors_count = errors_count + 1
+
+    print('All performance Meetical Pages were successfully created')
+    return meetical_pages    
 
 def __check_license(rest_client):
     current_timestamp = int(time.time() * 1000)
