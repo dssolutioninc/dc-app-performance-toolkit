@@ -188,6 +188,15 @@ class Editor(BasePage):
                                                     EditorLocators.confirm_publishing_button])
 
 
+class AdvancedImageGallery(BasePage):
+    advanced_image_gallery_configuration_url = UrlManager().advanced_image_gallery_configuration_url()
+    advanced_image_gallery_reference_configuration_url = UrlManager().advanced_image_gallery_reference_configuration_url()
+
+    def go_to_advanced_image_gallery_configuration(self):
+        self.go_to_url(self.advanced_image_gallery_configuration_url)
+
+    def go_to_advanced_image_gallery_reference_configuration(self):
+        self.go_to_url(self.advanced_image_gallery_reference_configuration_url)
 class AdminPage(BasePage):
     page_url = AdminLocators.admin_system_page_url
     page_loaded_selector = AdminLocators.login_form

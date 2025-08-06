@@ -12,6 +12,8 @@ class UrlManager:
         self.edit_page_params = f'/pages/editpage.action?pageId={page_id}'
         self.logout_params = "/logout.action"
         self.admin_system_params = f"/admin/viewgeneralconfig.action"
+        self.advanced_image_gallery_configuration_params = "/admin/plugins/xalt-advanced-gallery-configuration/configure.action"
+        self.advanced_image_gallery_reference_configuration_params = "/admin/plugins/advanced-image-gallery-reference-configuration/configure.action"
 
     def login_url(self):
         return f"{self.host}{self.login_params}"
@@ -31,6 +33,11 @@ class UrlManager:
     def admin_system_url(self):
         return f"{self.host}{self.admin_system_params}"
 
+    def advanced_image_gallery_configuration_url(self):
+        return f"{self.host}{self.advanced_image_gallery_configuration_params}"
+
+    def advanced_image_gallery_reference_configuration_url(self):
+        return f"{self.host}{self.advanced_image_gallery_reference_configuration_params}"
 
 class PopupLocators:
     popup_selectors = [
