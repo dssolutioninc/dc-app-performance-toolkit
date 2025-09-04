@@ -7,7 +7,7 @@ logger = init_logger(app_type='jira')
 @jira_measure("locust_timela_action")
 # @run_as_specific_user(username='admin', password='admin')  # run as specific user
 def app_specific_action(locust):
-    url = '/jira/rest/appbox/1.0/properties/search'
+    url = '/rest/appbox/1.0/properties/search'
     
     # Define the payload for the POST request
     payload = {
