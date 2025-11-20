@@ -12,6 +12,10 @@ class UrlManager:
         self.edit_page_params = f'/pages/editpage.action?pageId={page_id}'
         self.logout_params = "/logout.action"
         self.admin_system_params = f"/admin/viewgeneralconfig.action"
+        # Space Sync plugin URLs
+        self.space_sync_config_params = f"/spaces/spaceSyncConfig.action?key=TEST"
+        self.space_sync_admin_config_params = "/admin/plugins/space-sync-for-confluence-dc/config.action"
+        self.space_sync_main_page_params = "/plugins/space-sync-for-confluence-dc/main.action"
 
     def login_url(self):
         return f"{self.host}{self.login_params}"
@@ -30,6 +34,16 @@ class UrlManager:
 
     def admin_system_url(self):
         return f"{self.host}{self.admin_system_params}"
+    
+    # Space Sync plugin URLs
+    def space_sync_config_url(self):
+        return f"{self.host}{self.space_sync_config_params}"
+    
+    def space_sync_admin_config_url(self):
+        return f"{self.host}{self.space_sync_admin_config_params}"
+    
+    def space_sync_main_page_url(self):
+        return f"{self.host}{self.space_sync_main_page_params}"
 
 
 class PopupLocators:
@@ -122,3 +136,24 @@ class AdminLocators:
     web_sudo_submit_btn = (By.ID, 'authenticateButton')
     login_form = (By.ID, 'login-container')
     edit_baseurl = (By.ID, 'editbaseurl')
+
+
+# ============================================================================
+# Space Sync Plugin Locators
+# ============================================================================
+
+class SpaceSyncPageLocators:
+    page_sync_button = (By.ID, "page")
+    # page_sync_button = (By.ID, "page-sync-button")
+
+
+class SpaceSyncConfigLocators:
+    space_sync_section = (By.ID, "space-settings-container")
+
+
+class SpaceSyncAdminConfigLocators:
+    admin_config_root = (By.ID, "admin-config-root")
+
+
+class SpaceSyncMainPageLocators:
+    main_page_container = (By.ID, "main-page-container")

@@ -2,8 +2,13 @@ import time
 
 from selenium_ui.base_page import BasePage
 
-from selenium_ui.confluence.pages.selectors import UrlManager, LoginPageLocators, AllUpdatesLocators, PopupLocators,\
-    PageLocators, DashboardLocators, TopPanelLocators, EditorLocators, LogoutLocators, XsrfTokenLocators, AdminLocators
+from selenium_ui.confluence.pages.selectors import (
+    UrlManager, LoginPageLocators, AllUpdatesLocators, PopupLocators,
+    PageLocators, DashboardLocators, TopPanelLocators, EditorLocators, 
+    LogoutLocators, XsrfTokenLocators, AdminLocators,
+    SpaceSyncPageLocators, SpaceSyncConfigLocators, 
+    SpaceSyncAdminConfigLocators, SpaceSyncMainPageLocators
+)
 
 
 class Login(BasePage):
@@ -205,3 +210,62 @@ class AdminPage(BasePage):
         self.wait_for_page_loaded()
         if self.is_websudo():
             self.do_websudo(password)
+
+
+# ============================================================================
+# Space Sync Plugin Pages
+# ============================================================================
+
+class ConfluencePageWithSync(BasePage):
+    page_loaded_selector = PageLocators.page_title
+    
+    def __init__(self, driver, page_id):
+        BasePage.__init__(self, driver)
+        self.page_id = page_id
+        url_manager = UrlManager(page_id=page_id)
+        self.page_url = url_manager.page_url()
+    
+    def has_sync_button(self, timeout=10):
+        try:
+            self.wait_until_visible(SpaceSyncPageLocators.page_sync_button, timeout=timeout)
+            return True
+        except Exception:
+            return False
+
+
+class SpaceSyncConfigPage(BasePage):
+    
+    page_loaded_selector = SpaceSyncConfigLocators.space_sync_section
+    
+    def __init__(self, driver):
+        BasePage.__init__(self, driver)
+        self.page_url = UrlManager().space_sync_config_url()
+    
+    def has_space_sync_section(self, timeout=10):
+        try:
+            self.wait_until_visible(SpaceSyncConfigLocators.space_sync_section, timeout=timeout)
+            return True
+        except Exception:
+            return False
+
+
+class SpaceSyncAdminConfigPage(BasePage):
+    admin_url = UrlManager().space_sync_admin_config_url()
+
+    def go_to_admin_page(self, password):
+        self.go_to_url(self.admin_url)
+
+class SpaceSyncMainPage(BasePage):
+    
+    page_loaded_selector = SpaceSyncMainPageLocators.main_page_container
+    
+    def __init__(self, driver):
+        BasePage.__init__(self, driver)
+        self.page_url = UrlManager().space_sync_main_page_url()
+    
+    def has_main_container(self, timeout=10):
+        try:
+            self.wait_until_visible(SpaceSyncMainPageLocators.main_page_container, timeout=timeout)
+            return True
+        except Exception:
+            return False

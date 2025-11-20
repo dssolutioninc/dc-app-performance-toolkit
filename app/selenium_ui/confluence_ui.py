@@ -52,8 +52,17 @@ Add custom actions anywhere between login and log out action. Move this to a dif
 Write your custom selenium scripts in `app/extension/confluence/extension_ui.py`.
 Refer to `app/selenium_ui/confluence/modules.py` for examples.
 """
-# def test_1_selenium_custom_action(confluence_webdriver, confluence_datasets, confluence_screen_shots):
-#     extension_ui.app_specific_action(confluence_webdriver, confluence_datasets)
+def test_1_selenium_page_sync_button(confluence_webdriver, confluence_datasets, confluence_screen_shots):
+    extension_ui.test_page_sync_button(confluence_webdriver, confluence_datasets)
+
+def test_1_selenium_space_sync_config(confluence_webdriver, confluence_datasets, confluence_screen_shots):
+    extension_ui.test_space_sync_config(confluence_webdriver, confluence_datasets)
+
+def test_1_selenium_admin_config(confluence_webdriver, confluence_datasets, confluence_screen_shots):
+    extension_ui.test_admin_config(confluence_webdriver, confluence_datasets)
+    
+def test_1_selenium_main_page_container(confluence_webdriver, confluence_datasets, confluence_screen_shots):
+    extension_ui.test_main_page_container(confluence_webdriver, confluence_datasets)
 
 
 # this action should be the last one
