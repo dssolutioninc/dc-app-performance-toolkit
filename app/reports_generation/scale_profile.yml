@@ -5,13 +5,13 @@ runs:
   # E.g. relativePath: "./app/results/jira/2024-01-01_10-10-10"
   - runName: "1 Node"
     runType: "baseline"
-    relativePath: "./app/results/{PRODUCT}/{TIMESTAMP}"
+    relativePath: "./app/results/jira/2025-09-05_05-08-54"
   - runName: "2 Nodes"
     runType: "experiment"
-    relativePath: "./app/results/{PRODUCT}/{TIMESTAMP}"
+    relativePath: "./app/results/jira/2025-09-05_08-19-46"
   - runName: "4 Nodes"
     runType: "experiment"
-    relativePath: "./app/results/{PRODUCT}/{TIMESTAMP}"
+    relativePath: "./app/results/jira/2025-09-05_09-31-10"
 
 # Chart generation configs
 index_col: "Action"
