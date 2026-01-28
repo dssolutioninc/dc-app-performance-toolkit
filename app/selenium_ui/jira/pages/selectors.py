@@ -29,6 +29,7 @@ class UrlManager:
         self.scrum_board_backlog_params = f"/secure/RapidBoard.jspa?rapidView={board_id}&view=planning"
         self.scrum_board_params = f"/secure/RapidBoard.jspa?rapidView={board_id}"
         self.admin_system_params = f"/secure/admin/ViewApplicationProperties.jspa"
+        self.project_role_tab_params = f"/projects/{project_key}?selectedItem=jira.plugin.projectrole.projectroletab:sidebar-item"
 
     def login_url(self):
         return f"{self.host}{self.login_params}"
@@ -69,6 +70,8 @@ class UrlManager:
     def admin_system_url(self):
         return f"{self.host}{self.admin_system_params}"
 
+    def project_role_tab_url(self):
+        return f"{self.host}{self.project_role_tab_params}"
 
 class LoginPageLocators:
     login_url = UrlManager().login_url()
@@ -137,7 +140,7 @@ class ProjectLocators:
     # projects list locators
     projects_list = (By.CSS_SELECTOR, "tbody.projects-list")
     projects_not_found = (By.CLASS_NAME, "none-panel")
-
+    project_role_tab_content = (By.CLASS_NAME, "aui-page-header-main")
 
 class SearchLocators:
     search_issue_table = (By.ID, "issuetable")
