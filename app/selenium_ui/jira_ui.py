@@ -62,8 +62,12 @@ Refer to `app/selenium_ui/jira/modules.py` for examples.
 """
 
 
-# def test_1_selenium_custom_action(jira_webdriver, jira_datasets, jira_screen_shots):
-#     extension_ui.app_specific_action(jira_webdriver, jira_datasets)
+def test_1_selenium_custom_action(jira_webdriver, jira_datasets, jira_screen_shots):
+    extension_ui.test_1_view_xstudio_config_page(jira_webdriver, jira_datasets)
+
+
+def test_1_selenium_custom_action_xstudio_issue(jira_webdriver, jira_datasets, jira_screen_shots):
+    extension_ui.test_2_view_xstudio_issue_tab(jira_webdriver, jira_datasets)
 
 
 # this action should be the last one
