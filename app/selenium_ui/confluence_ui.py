@@ -48,12 +48,25 @@ def test_1_selenium_cql_search_three_words(confluence_webdriver, confluence_data
 
 
 """
-Add custom actions anywhere between login and log out action. Move this to a different line as needed.
-Write your custom selenium scripts in `app/extension/confluence/extension_ui.py`.
-Refer to `app/selenium_ui/confluence/modules.py` for examples.
+Excel-like Tables for Confluence DC — plugin-specific extension tests.
+Configure ETC_MACRO_PAGE_IDS in extension/confluence/extension_ui.py before
+running the macro-view test.
 """
-# def test_1_selenium_custom_action(confluence_webdriver, confluence_datasets, confluence_screen_shots):
-#     extension_ui.app_specific_action(confluence_webdriver, confluence_datasets)
+
+# --- Non-admin UI tests ---
+
+def test_1_selenium_etc_view_macro_page(confluence_webdriver, confluence_datasets, confluence_screen_shots):
+    extension_ui.etc_view_macro_page(confluence_webdriver, confluence_datasets)
+
+
+def test_1_selenium_etc_view_homepage(confluence_webdriver, confluence_datasets, confluence_screen_shots):
+    extension_ui.etc_view_homepage(confluence_webdriver, confluence_datasets)
+
+
+# --- Admin UI test (must run just before logout) ---
+
+def test_1_selenium_etc_view_attachment_manager(confluence_webdriver, confluence_datasets, confluence_screen_shots):
+    extension_ui.etc_view_attachment_manager(confluence_webdriver, confluence_datasets)
 
 
 # this action should be the last one
